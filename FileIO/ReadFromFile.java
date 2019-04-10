@@ -1,36 +1,34 @@
-package FileIO;
-
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ReadFromFile {
     public static void main(String[] args) throws Exception{
         BufferedReader br = null;
-        FileWriter wr = null;
-        wr = new FileWriter("out.txt");
-        br = new BufferedReader(new FileReader("in.txt"));
+        BufferedWriter wr = null;
+        wr = new BufferedWriter(new FileWriter(new File("out.txt")));
+        br = new BufferedReader(new FileReader(new File("in.txt")));
         String s;
-        String[] words = null;
+        ArrayList<String> words = new ArrayList<>();
         int count = 1;
         while((s = br.readLine()) != null) {
-            words = s.split(" ");
-            for(int i=0; i<words.length; i++) {
-                if(words[i].equals("")) continue;
-                for(int j=i+1; j<words.length; j++) {
-                    if(words[i].equals(words[j])) {
-                        words[j] = "";
-                        count++;
-                    }
+            String[] singleWord = s.split(" ");
+            words.addAll(Arrays.asList(singleWord));
+        }
+        for(int i=0; i<words.size(); i+=count) {
+            if(words.get(i).isEmpty()) continue;
+            for(int j=i+1; j<words.size(); j++) {
+                if(words.get(i).equals(words.get(j))) {
+                    count++;
+                    words.set(j, "");
                 }
-                wr.append("'").append(words[i]).append("'").append(" occured ").append(String.valueOf(count)).append(" times.").append("\n");
-                words[i] = "";
-                count = 1;
             }
+            wr.append(words.get(i)).append(" occured ").append(String.valueOf(count)).append(" times.").append("\n");
+            count = 1;
+            words.set(i, "");
         }
-        try {
-            br.close();
-            wr.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        br.close();
+        wr.close();
     }
+
 }
